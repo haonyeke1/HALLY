@@ -1,0 +1,6 @@
+{
+  "name": "Business Guardian AI",
+  "description": "Protect your business from preventable losses. Business Guardian watches your invoices, important documents, contracts and business deadlines so you don't have to.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

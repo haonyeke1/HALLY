@@ -1,0 +1,126 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile in Business Guardian",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "businessId": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "email"]
+    },
+    "Business": {
+      "title": "Business",
+      "description": "Business profile and security configuration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 120 },
+        "businessType": { "type": "string", "maxLength": 80 },
+        "country": { "type": "string", "maxLength": 60 },
+        "currency": { "type": "string", "maxLength": 10 },
+        "timeZone": { "type": "string", "maxLength": 60 },
+        "riskScore": { "type": "number" },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "ownerId", "name"]
+    },
+    "RiskAssessment": {
+      "title": "RiskAssessment",
+      "description": "Identified business risks and vulnerability checks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "category": { "type": "string", "maxLength": 50 },
+        "title": { "type": "string", "maxLength": 150 },
+        "severity": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] },
+        "status": { "type": "string", "enum": ["Open", "Mitigated", "Ignored"] },
+        "impact": { "type": "string", "maxLength": 300 },
+        "recommendation": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "userId", "title", "severity", "status"]
+    },
+    "Alert": {
+      "title": "Alert",
+      "description": "Practical real-time protection alerts",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 150 },
+        "message": { "type": "string", "maxLength": 600 },
+        "type": { "type": "string", "maxLength": 50 },
+        "priority": { "type": "string", "enum": ["High", "Medium", "Low"] },
+        "actionUrl": { "type": "string", "maxLength": 100 },
+        "read": { "type": "boolean" },
+        "resolved": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "userId", "title", "message", "priority"]
+    },
+    "ScamCheck": {
+      "title": "ScamCheck",
+      "description": "Verification analysis of suspicious communications, invoices or requests",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "source": { "type": "string", "maxLength": 100 },
+        "suspicionText": { "type": "string", "maxLength": 3000 },
+        "verdict": { "type": "string", "enum": ["Likely Scam", "Suspicious", "Likely Safe"] },
+        "riskScore": { "type": "number" },
+        "redFlags": { "type": "string", "maxLength": 1000 },
+        "actionGuide": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "userId", "verdict"]
+    },
+    "CopilotMessage": {
+      "title": "CopilotMessage",
+      "description": "Conversation message with Guardian AI business assistant",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["user", "assistant"] },
+        "text": { "type": "string", "maxLength": 4000 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "userId", "role", "text"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "/businesses/{businessId}": {
+      "schema": { "$ref": "#/entities/Business" },
+      "description": "Business settings and posture"
+    },
+    "/risks/{riskId}": {
+      "schema": { "$ref": "#/entities/RiskAssessment" },
+      "description": "Assessed business risks"
+    },
+    "/alerts/{alertId}": {
+      "schema": { "$ref": "#/entities/Alert" },
+      "description": "User protection alerts"
+    },
+    "/scam_checks/{checkId}": {
+      "schema": { "$ref": "#/entities/ScamCheck" },
+      "description": "Scam and fraud detector analyses"
+    },
+    "/copilot_messages/{messageId}": {
+      "schema": { "$ref": "#/entities/CopilotMessage" },
+      "description": "AI business assistant conversation history"
+    }
+  }
+}

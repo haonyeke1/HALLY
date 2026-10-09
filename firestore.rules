@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Connection test document
+    match /test/{docId} {
+      allow read: if true;
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read: if isValidId(userId) && isOwner(userId);
+      allow create, update: if isValidId(userId) && isOwner(userId);
+      allow delete: if isValidId(userId) && isOwner(userId);
+    }
+
+    // Businesses Collection
+    match /businesses/{businessId} {
+      allow get: if isValidId(businessId) && isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isValidId(businessId) && isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update, delete: if isValidId(businessId) && isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    // Risks Collection
+    match /risks/{riskId} {
+      allow get: if isValidId(riskId) && isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isValidId(riskId) && isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isValidId(riskId) && isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Alerts Collection
+    match /alerts/{alertId} {
+      allow get: if isValidId(alertId) && isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isValidId(alertId) && isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isValidId(alertId) && isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Scam Checks Collection
+    match /scam_checks/{checkId} {
+      allow get: if isValidId(checkId) && isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isValidId(checkId) && isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isValidId(checkId) && isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Copilot Messages Collection
+    match /copilot_messages/{messageId} {
+      allow get: if isValidId(messageId) && isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isValidId(messageId) && isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isValidId(messageId) && isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}
